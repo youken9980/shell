@@ -9,4 +9,3 @@ images="docker images -f dangling=false | grep -v 'REPOSITORY' | grep -v '<none>
 eval "${images}" | while read img; do
  	echo "$(echo ${img} | awk '{print $1":"$2"    "$3"    "$7}')"
 done
-exit 0
