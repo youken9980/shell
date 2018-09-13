@@ -3,7 +3,7 @@
 list="
 "
 # 对取到的集合进行循环
-for item in $(eval echo ${list}); do
+for item in ${list}; do
 	# 如果是目录且存在则执行，如果是文件或目录不存在则忽略
 	if [ ! -d "${item}" ]; then
 		# 是文件或目录不存在
