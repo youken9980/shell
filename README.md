@@ -124,6 +124,7 @@ stopCDIBackend.sh
 
 更新版本号，MacOS版本。
 使用方法：
+
 ```shell
 updateFrameworkVersion.sh
 ```
@@ -142,10 +143,18 @@ updateFrameworkVersion_windows.sh
 
 ### batch.sh
 
-批处理命令，针对当前目录下所有子目录，执行命令列表。
+批处理命令，对当前目录下所有子目录，执行命令列表。
 使用方法：
 ```shell
 batch.sh [frontpage|gateway|service] <'command1'> ['command2'] ['command3'] ...
+```
+
+### batchList.sh
+
+批处理命令，对脚本中指定的子目录，执行命令列表。
+使用方法：
+```shell
+batchList.sh <'command1'> ['command2'] ['command3'] ...
 ```
 
 ### cleanLastUpdated.sh
