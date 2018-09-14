@@ -165,6 +165,19 @@ batchList.sh <'command1'> ['command2'] ['command3'] ...
 cleanLastUpdated.sh
 ```
 
+### gitPrune.sh
+
+清理无效分支，并压缩历史信息。
+```shell
+git pull --rebase
+git remote prune origin
+git gc --prune=now
+```
+使用方法：
+```shell
+gitPullAllBranch.sh
+```
+
 ### gitPullAllBranch.sh
 
 更新当前Git库的所有分支。
