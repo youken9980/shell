@@ -193,6 +193,7 @@ NDPKnowledgeService
 NDPLoggerService
 NDPMessageService
 NDPOrderService
+NDPReportService
 NDPScheduleService
 NDPSignaturesService
 NDPSplitPackageService

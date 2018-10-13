@@ -1,9 +1,6 @@
 #!/bin/bash
 
 list="
-CDWPWebGateway
-NDPFramework
-NDPOrderService
 "
 # 对取到的集合进行循环
 for item in ${list}; do

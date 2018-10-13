@@ -18,4 +18,3 @@ nohup live-server --port=7003 >> "../${file_name_frontpage}" 2>&1 &
 cd ..
 
 tail -f "${file_name_frontpage}"
-rm "${file_name_frontpage}"
