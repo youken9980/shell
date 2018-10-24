@@ -1,8 +1,8 @@
 #!/bin/bash
 
-old_version=".js?js_version=20181009\""
+old_version=".js?js_version=20181018\""
 origin=".js\""
-new_version=".js?js_version=20181011\""
+new_version=".js?js_version=20181018\""
 
 file_list="find . -name \"*.html\" -type f -print"
 eval "${file_list}" | while read file; do
@@ -18,6 +18,6 @@ eval "${file_list}" | while read file; do
 	# sed -i "" "s/.js?d=20180601/${origin}/g" "${file}"
 	sed -i "" "s/${old_version}/${origin}/g" "${file}"
 	sed -i "" "s/${origin}/${new_version}/g" "${file}"
-	cat "${file}" | grep -n "<script" | grep "src="
+	cat "${file}" | grep -n "<script" | grep "src=" | grep -v "${new_version}"
 	echo ""
 done

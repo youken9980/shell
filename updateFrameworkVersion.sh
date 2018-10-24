@@ -173,7 +173,9 @@ for framework in ${framework_list}; do
 	echo ${framework}
 	file_path="NDPFramework/${framework}/${file_name}"
 	update_pom_version "${file_path}" "${framework}" "$(eval echo '$'"${framework}")"
-	update_properties_value "${file_path}" "NDPBaseApi.version" "$(eval echo '$'"NDPBaseApi")"
+	for framework in ${framework_list}; do
+		update_properties_value "${file_path}" "${framework}.version" "$(eval echo '$'"${framework}")"
+	done
 	echo ""
 done
 
