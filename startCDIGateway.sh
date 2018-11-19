@@ -22,7 +22,6 @@ for item in ${list}; do
 	cd ${item}
 	nohup mvn clean jetty:run -Dmaven.test.skip=true -U >> "../${file_name_gateway}" 2>&1 &
 	cd ..
-	echo ""
 done
 
 tail -f "${file_name_gateway}"

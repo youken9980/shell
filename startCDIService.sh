@@ -10,15 +10,15 @@ NDPDemandService
 NDPSplitPackageService
 NDPOrderService
 
-NDPEvaluateService
+NDPMessageService
 NDPCooperativeService
+NDPScheduleService
 
 NDPReportService
 NDPLoggerService
 NDPSystemService
 
-NDPScheduleService
-NDPMessageService
+NDPEvaluateService
 NDPKnowledgeService
 NDPSignaturesService
 "
@@ -37,7 +37,6 @@ for item in ${list}; do
 	cd ${item}
 	nohup mvn clean spring-boot:run -Dmaven.test.skip=true -U >> "../${file_name_service}" 2>&1 &
 	cd ..
-	echo ""
 done
 
 tail -f "${file_name_service}"

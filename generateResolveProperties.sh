@@ -7,6 +7,7 @@
 ########
 
 host_default="10.39.1.237"
+# host_default="127.0.0.1"
 host_local="127.0.0.1"
 # 配置各微服务提供方的IP地址，默认由注册中心提供，直连时修改
 service_host_auth="${host_default}"
