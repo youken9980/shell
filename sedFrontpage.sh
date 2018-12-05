@@ -1,8 +1,8 @@
 #!/bin/bash
 
-old_version="\.js?js_version=20181114\""
+old_version="\.js?js_version=20181122\""
 origin="\.js\""
-new_version="\.js?js_version=20181115\""
+new_version="\.js?js_version=20181128\""
 
 file_list="find . -name \"*.html\" -type f -print"
 eval "${file_list}" | while read file; do
