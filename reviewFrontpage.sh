@@ -29,7 +29,7 @@ CDMP_PAGE_URL
 cd CDTPWebFrontPage
 echo ">>> CDTPWebFrontPage"
 for item in ${tp_list}; do
-    echo ">>> ${item}"
+    # echo ">>> ${item}"
     grep "${item}" -C0 js/util.min.js
 done
 cd ..
@@ -38,7 +38,7 @@ echo ""
 cd CDWPWebFrontPage
 echo ">>> CDWPWebFrontPage"
 for item in ${wp_list}; do
-    echo ">>> ${item}"
+    # echo ">>> ${item}"
     grep "${item}" -C0 js/util.min.js
 done
 cd ..
@@ -47,7 +47,7 @@ echo ""
 cd CDMPWebFrontPage
 echo ">>> CDMPWebFrontPage"
 for item in ${mp_list}; do
-    echo ">>> ${item}"
+    # echo ">>> ${item}"
     grep "${item}" -C0 js/util.min.js
 done
 cd ..
