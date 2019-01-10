@@ -7,18 +7,9 @@ echo "user=${MySQL_US}" >> ${file_path}
 echo "password=${MySQL_PW}" >> ${file_path}
 
 list="
-ndp_cooperative
-ndp_demand
-ndp_evaluate
-ndp_forum
-ndp_knowledge
-ndp_message
-ndp_order
-ndp_signatures
-ndp_system
-ndp_system_log
-ndp_unpack
-ndp_user
+uat34cs_data
+uat34cs_gateway
+uat34cs_master
 "
 
 for item in $(eval echo ${list}); do

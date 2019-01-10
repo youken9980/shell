@@ -1,11 +1,9 @@
 #!/bin/bash
 
-args=""
-if [ $# -gt 0 ]
-then
-	args="| $1"
-fi
-images="docker images -f dangling=false | grep -v 'REPOSITORY' | grep -v '<none>' $args"
+images="docker images -f dangling=false | grep -v 'REPOSITORY' | grep -v '<none>'"
+images="${images} | grep -v 'local/'"
+images="${images} | grep -v 'reg.enncloud.cn/'"
+images="${images} | grep -v 'smartcloud/'"
 eval "${images}" | while read img; do
 	repo="$(echo ${img} | awk '{print $1":"$2}')"
 	size="$(echo ${img} | awk '{print $7}')"

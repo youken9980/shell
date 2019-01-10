@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 集合列表
-arg_list="clean compile package install deploy spring-boot:run jetty:run docker:build"
+arg_list="-X clean compile package install deploy spring-boot:run jetty:run docker:build dockerfile:build"
 for ((i=1; i<=$#; i++)); do
 	# echo "$(eval echo '$'"$i")"
 	if [[ ! " ${arg_list} " =~ " $(eval echo '$'"$i") " ]]; then
