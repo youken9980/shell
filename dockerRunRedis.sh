@@ -13,6 +13,7 @@ fi
 data_path="~/dockerVolumn/redis/data/"
 
 eval "docker run -d -p 6379:6379 \
+  -e TZ=\"Asia/Shanghai\" \
   -v ${data_path}${default}:/data \
   --network mynet --name redis-${default} \
   redis redis-server --appendonly yes"

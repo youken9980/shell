@@ -10,5 +10,6 @@ if [ $# == 1 ]; then
 fi
 
 eval "docker run -it --rm \
+  -e TZ=\"Asia/Shanghai\" \
   --network mynet --name redis-${default}-client \
   redis redis-cli -h redis-${default} -p 6379 --raw"
