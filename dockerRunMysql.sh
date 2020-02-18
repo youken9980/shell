@@ -5,10 +5,11 @@ if [ $# == 1 ]; then
     default="$1"
 fi
 
-data_path="~/dockerVolumn/mysql/data/${default}"
-logs_path="~/dockerVolumn/mysql/logs/${default}"
-slow_log_filepath="${logs_path}/mysql-slow.log"
 container_name="mysql-${default}"
+data_path="~/dockerVolume/mysql/data/${default}"
+logs_path="~/dockerVolume/mysql/logs/${default}"
+slow_log_filepath="${logs_path}/mysql-slow.log"
+config_filepath="~/dockerVolume/mysql/config/mysql.cnf"
 
 # 不存在则新建目录
 if [ ! -e "${data_path}" ]; then
@@ -28,10 +29,10 @@ fi
 # docker rm $(docker stop "${container_name}")
 eval "docker run -d -p 3306:3306 \
   -v ${data_path}:/var/lib/mysql \
-  -v ~/dockerVolumn/mysql/config/mysql.cnf:/etc/mysql/mysql.cnf \
+  -v ${config_filepath}:/etc/mysql/mysql.cnf \
   -v ${slow_log_filepath}:/etc/mysql/logs/mysql-slow.log \
   --network mynet --name ${container_name} \
   -e TZ=\"Asia/Shanghai\" \
-  -e MYSQL_ROOT_PASSWORD=admin123 mysql:5 \
-  --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"
+  -e MYSQL_ROOT_PASSWORD=admin123 \
+  mysql:5 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"
 docker logs -f "${container_name}"
