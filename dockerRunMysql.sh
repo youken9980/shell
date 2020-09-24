@@ -1,13 +1,18 @@
 #!/bin/bash
 
-default="local"
+default_suffix="local"
+default_port=""
 if [ $# == 1 ]; then
-    default="$1"
+    default_suffix="$1"
+fi
+if [ $# == 2 ]; then
+    default_suffix="$1"
+    default_port="$2"
 fi
 
-container_name="mysql-${default}"
-data_path="~/dockerVolume/mysql/data/${default}"
-logs_path="~/dockerVolume/mysql/logs/${default}"
+container_name="mysql-${default_suffix}"
+data_path="~/dockerVolume/mysql/data/${default_suffix}"
+logs_path="~/dockerVolume/mysql/logs/${default_suffix}"
 slow_log_filepath="${logs_path}/mysql-slow.log"
 config_filepath="~/dockerVolume/mysql/config/mysql.cnf"
 
@@ -25,9 +30,12 @@ if [ ! -e "${slow_log_filepath}" ]; then
     echo "${cmd}"
     eval "${cmd}"
 fi
+if [ "${default_port}" -gt 0 ]; then
+    default_port="-p ${default_port}:3306"
+fi
 
 # docker rm $(docker stop "${container_name}")
-eval "docker run -d -p 3306:3306 \
+eval "docker run -d ${default_port} \
   -v ${data_path}:/var/lib/mysql \
   -v ${config_filepath}:/etc/mysql/mysql.cnf \
   -v ${slow_log_filepath}:/etc/mysql/logs/mysql-slow.log \
