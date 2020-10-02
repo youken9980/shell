@@ -13,5 +13,5 @@ eval "docker run -d -p 6379:6379 \
   -v ${data_path}:/data \
   --network mynet --name ${container_name} \
   -e TZ=\"Asia/Shanghai\" \
-  redis redis-server --appendonly yes"
+  redis:alpine redis-server --appendonly yes"
 docker logs -f "redis-${default}"

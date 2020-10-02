@@ -12,4 +12,4 @@ fi
 eval "docker run -it --rm \
   -e TZ=\"Asia/Shanghai\" \
   --network mynet --name redis-${default}-client \
-  redis redis-cli -h ${default} -p 6379 --raw"
+  redis:alpine redis-cli -h ${default} -p 6379 --raw"
