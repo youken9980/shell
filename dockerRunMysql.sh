@@ -20,8 +20,8 @@ if [ ! -f "${config_filepath}" ];then
 fi
 echo "Container name: ${container_name}"
 echo "Config file: ${config_filepath}"
+echo "Data path: ${data_path}"
 
-# 不存在则新建目录
 if [ ! -e "${data_path}" ]; then
     eval "mkdir -p ${data_path}"
 fi
@@ -36,34 +36,33 @@ else
 fi
 
 function dockerRm() {
-    containerId=$(docker ps -aq --filter name="${container_name}")
+    containerId=$(docker ps -aq --filter $1)
     if [ "${containerId}" != "" ]; then
         docker rm $(docker stop "${containerId}")
     fi
 }
 
-function dockerRun() {
-    docker run -d ${default_port} \
-        -v ${data_path}:/var/lib/mysql \
-        -v ${config_filepath}:/etc/mysql/mysql.cnf \
-        -v ${slow_log_filepath}:/etc/mysql/logs/mysql-slow.log \
-        --network mynet --name ${container_name} \
-        -e TZ="Asia/Shanghai" \
-        -e MYSQL_ROOT_PASSWORD=admin123 \
-        mysql:5 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-}
-
 function dockerLogsUntil() {
-    containerId=$(docker ps -aq --filter name="${container_name}")
+    filter="$1"
+    endpoint="$2"
+    containerId=$(docker ps -aq --filter "${filter}")
     nohup docker logs -f "${containerId}" > "/tmp/${containerId}.log" 2>&1 &
     sleep 3s
-    PID=$(ps aux | grep "docker logs" | grep ${containerId} | awk '{print $2}' | sort -nr | head -1)
-    echo ${PID}
-    tail -f --pid=${PID} /tmp/${containerId}.log | sed '/port:[[:space:]]3306[[:space:]][[:space:]]MySQL[[:space:]]Community[[:space:]]Server[[:space:]](GPL)/q'
-    kill -9 ${PID}
-    rm /tmp/${containerId}.log
+    PID=$(ps aux | grep "docker" | grep ${containerId} | awk '{print $2}' | sort -nr | head -1)
+    if [ "${PID}" != "" ]; then
+        eval "tail -f --pid=${PID} /tmp/${containerId}.log | sed '/${endpoint}/q'"
+        kill -9 ${PID}
+        rm /tmp/${containerId}.log
+    fi
 }
 
-dockerRm
-dockerRun
-dockerLogsUntil
+dockerRm "name=${container_name}"
+docker run -d ${default_port} \
+    -v ${data_path}:/var/lib/mysql \
+    -v ${config_filepath}:/etc/mysql/mysql.cnf \
+    -v ${slow_log_filepath}:/etc/mysql/logs/mysql-slow.log \
+    --network mynet --name ${container_name} \
+    -e TZ="Asia/Shanghai" \
+    -e MYSQL_ROOT_PASSWORD=admin123 \
+    mysql:5 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+dockerLogsUntil "name=${container_name}" "port:[[:space:]]3306[[:space:]][[:space:]]MySQL[[:space:]]Community[[:space:]]Server[[:space:]](GPL)"
