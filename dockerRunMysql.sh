@@ -37,8 +37,12 @@ fi
 
 function dockerRm() {
     containerId=$(docker ps -aq --filter $1)
+    runningContainerId=$(docker ps -aq --filter status=running --filter $1)
+    if [ "${runningContainerId}" != "" ]; then
+        docker stop ${runningContainerId}
+    fi
     if [ "${containerId}" != "" ]; then
-        docker rm $(docker stop "${containerId}")
+        docker rm ${containerId}
     fi
 }
 
@@ -63,6 +67,6 @@ docker run -d ${default_port} \
     -v ${slow_log_filepath}:/etc/mysql/logs/mysql-slow.log \
     --network mynet --name ${container_name} \
     -e TZ="Asia/Shanghai" \
-    -e MYSQL_ROOT_PASSWORD=admin123 \
+    -e MYSQL_ROOT_PASSWORD="admin123" \
     mysql:5 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 dockerLogsUntil "name=${container_name}" "port:[[:space:]]3306[[:space:]][[:space:]]MySQL[[:space:]]Community[[:space:]]Server[[:space:]](GPL)"
