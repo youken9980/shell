@@ -62,11 +62,12 @@ function dockerLogsUntil() {
 
 dockerRm "name=${container_name}"
 docker run -d ${default_port} \
+    -e TZ="Asia/Shanghai" \
+    -e MYSQL_ROOT_PASSWORD="admin123" \
     -v ${data_path}:/var/lib/mysql \
     -v ${config_filepath}:/etc/mysql/mysql.cnf \
     -v ${slow_log_filepath}:/etc/mysql/logs/mysql-slow.log \
+    --cpus 2 --memory 512M --memory-swap -1 \
     --network mynet --name ${container_name} \
-    -e TZ="Asia/Shanghai" \
-    -e MYSQL_ROOT_PASSWORD="admin123" \
     mysql:5 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 dockerLogsUntil "name=${container_name}" "port:[[:space:]]3306[[:space:]][[:space:]]MySQL[[:space:]]Community[[:space:]]Server[[:space:]](GPL)"
