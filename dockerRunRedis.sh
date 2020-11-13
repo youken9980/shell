@@ -49,8 +49,9 @@ function dockerLogsUntil() {
 
 dockerRm "name=${container_name}"
 docker run -d ${default_port} \
-    -v ${data_path}:/data \
-    --network mynet --name ${container_name} \
     -e TZ="Asia/Shanghai" \
+    -v ${data_path}:/data \
+    --cpus 0.5 --memory 64M --memory-swap -1 \
+    --network mynet --name ${container_name} \
     redis:alpine redis-server --appendonly yes
 dockerLogsUntil "name=${container_name}" "[[:space:]]Ready[[:space:]]to[[:space:]]accept[[:space:]]connections"
