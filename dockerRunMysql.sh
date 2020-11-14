@@ -10,30 +10,23 @@ if [ $# == 2 ]; then
     default_port="$2"
 fi
 
-container_name="mysql-${default_suffix}"
-data_path="$(eval readlink -m ~/dockerVolume/mysql/data/${default_suffix})"
-logs_path="$(eval readlink -m ~/dockerVolume/mysql/logs/${default_suffix})"
-slow_log_filepath="$(eval readlink -m ${logs_path}/mysql-slow.log)"
-config_filepath="$(eval readlink -m ~/dockerVolume/mysql/config/mysql-${default_suffix}.cnf)"
-if [ ! -f "${config_filepath}" ];then
-    config_filepath="$(eval readlink -f ~/dockerVolume/mysql/config/mysql.cnf)"
-fi
-echo "Container name: ${container_name}"
-echo "Config file: ${config_filepath}"
-echo "Data path: ${data_path}"
-
-if [ ! -e "${data_path}" ]; then
-    eval "mkdir -p ${data_path}"
-fi
-if [ ! -e "${slow_log_filepath}" ]; then
-    eval "mkdir -p ${logs_path}"
-    eval "touch ${slow_log_filepath}"
-fi
+nodeList+=("${default_suffix}")
+cleanup="false"
+dataHome="~/dockerVolume/mysql/data"
+logsHome="~/dockerVolume/mysql/logs"
+configHome="~/dockerVolume/mysql/config"
+configFilePattern="${configHome}/mysql-{{ node }}.cnf"
+configFileDefault="~/dockerVolume/mysql/config/mysql.cnf"
+imageTag="mysql:5"
+containerNamePrefix="ycg-mysql"
+network="mynet"
+startPort="3306"
 if [ "${default_port}" = "0" ]; then
-    default_port=""
+    publishPort="false"
 else
-    default_port="-p ${default_port}:3306"
+    publishPort="true"
 fi
+mysqlRootPassword="admin123"
 
 function dockerRm() {
     containerId=$(docker ps -aq --filter $1)
@@ -51,7 +44,7 @@ function dockerLogsUntil() {
     endpoint="$2"
     containerId=$(docker ps -aq --filter "${filter}")
     nohup docker logs -f "${containerId}" > "/tmp/${containerId}.log" 2>&1 &
-    sleep 3s
+    sleep 1s
     PID=$(ps aux | grep "docker" | grep ${containerId} | awk '{print $2}' | sort -nr | head -1)
     if [ "${PID}" != "" ]; then
         eval "tail -f --pid=${PID} /tmp/${containerId}.log | sed '/${endpoint}/q'"
@@ -60,14 +53,53 @@ function dockerLogsUntil() {
     fi
 }
 
-dockerRm "name=${container_name}"
-docker run -d ${default_port} \
-    -e TZ="Asia/Shanghai" \
-    -e MYSQL_ROOT_PASSWORD="admin123" \
-    -v ${data_path}:/var/lib/mysql \
-    -v ${config_filepath}:/etc/mysql/mysql.cnf \
-    -v ${slow_log_filepath}:/etc/mysql/logs/mysql-slow.log \
-    --cpus 2 --memory 512M --memory-swap -1 \
-    --network mynet --name ${container_name} \
-    mysql:5 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-dockerLogsUntil "name=${container_name}" "port:[[:space:]]3306[[:space:]][[:space:]]MySQL[[:space:]]Community[[:space:]]Server[[:space:]](GPL)"
+for node in ${nodeList[@]}; do
+    containerName="${containerNamePrefix}-${node}"
+    dockerRm "name=${containerName}"
+done
+
+port="${startPort}"
+for node in ${nodeList[@]}; do
+    publish=""
+    if [ "${publishPort}" = "first" -a "${port}" = "${startPort}" -o "${publishPort}" = "true" ]; then
+        publish="-p ${port}:3306"
+    fi
+    dataPath="$(eval readlink -m ${dataHome}/${node})"
+    logsPath="$(eval readlink -m ${logsHome}/${node})"
+    slowLogFile="$(eval readlink -m ${logsPath}/mysql-slow.log)"
+    configFile="$(echo "${configFilePattern}" | sed "s|{{ node }}|${node}|g")"
+    configFile="$(eval readlink -f ${configFile})"
+    if [ ! -f "${configFile}" ];then
+        configFile="$(eval readlink -f ${configFileDefault})"
+    fi
+    containerName="${containerNamePrefix}-${node}"
+    echo "dataPath: ${dataPath}"
+    echo "slowLogFile: ${slowLogFile}"
+    echo "configFile: ${configFile}"
+    if [ "${cleanup}" = "true" ]; then
+        if [ -e "${dataPath}" ]; then
+            eval "rm -rf ${dataPath}"
+        fi
+        if [ -e "${slowLogFile}" ]; then
+            eval "rm -rf ${logsPath}"
+        fi
+    fi
+    if [ ! -e "${dataPath}" ]; then
+        eval "mkdir -p ${dataPath}"
+    fi
+    if [ ! -e "${slowLogFile}" ]; then
+        eval "mkdir -p ${logsPath}"
+        eval "touch ${slowLogFile}"
+    fi
+    docker run -d ${publish} \
+        --cpus 2 --memory 768M --memory-swap -1 \
+        -e TZ="Asia/Shanghai" \
+        -e MYSQL_ROOT_PASSWORD="${mysqlRootPassword}" \
+        -v ${dataPath}:/var/lib/mysql \
+        -v ${configFile}:/etc/mysql/mysql.cnf \
+        -v ${slowLogFile}:/etc/mysql/logs/mysql-slow.log \
+        --network ${network} --name ${containerName} \
+        mysql:5 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    dockerLogsUntil "name=${containerName}" "port:[[:space:]]3306[[:space:]][[:space:]]MySQL[[:space:]]Community[[:space:]]Server[[:space:]](GPL)"
+    port=$[$port + 1]
+done
