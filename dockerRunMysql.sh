@@ -18,7 +18,7 @@ configHome="~/dockerVolume/mysql/config"
 configFilePattern="${configHome}/mysql-{{ node }}.cnf"
 configFileDefault="~/dockerVolume/mysql/config/mysql.cnf"
 imageTag="mysql:5"
-containerNamePrefix="ycg-mysql"
+containerNamePrefix="mysql"
 network="mynet"
 startPort="3306"
 if [ "${default_port}" = "0" ]; then
@@ -99,7 +99,7 @@ for node in ${nodeList[@]}; do
         -v ${configFile}:/etc/mysql/mysql.cnf \
         -v ${slowLogFile}:/etc/mysql/logs/mysql-slow.log \
         --network ${network} --name ${containerName} \
-        mysql:5 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+        ${imageTag} --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     dockerLogsUntil "name=${containerName}" "port:[[:space:]]3306[[:space:]][[:space:]]MySQL[[:space:]]Community[[:space:]]Server[[:space:]](GPL)"
     port=$[$port + 1]
 done

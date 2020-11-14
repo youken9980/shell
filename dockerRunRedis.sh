@@ -10,16 +10,17 @@ if [ $# == 2 ]; then
     default_port="$2"
 fi
 
-container_name="redis-${default_suffix}"
-data_path="$(eval readlink -m ~/dockerVolume/redis/data/${default_suffix})"
-
-if [ ! -e "${data_path}" ]; then
-    eval "mkdir -p ${data_path}"
-fi
+nodeList+=("${default_suffix}")
+cleanup="true"
+dataHome="~/dockerVolume/redis/data"
+imageTag="redis:alpine"
+containerNamePrefix="redis"
+network="mynet"
+startPort="6379"
 if [ "${default_port}" = "0" ]; then
-    default_port=""
+    publishPort="false"
 else
-    default_port="-p ${default_port}:6379"
+    publishPort="true"
 fi
 
 function dockerRm() {
@@ -38,7 +39,7 @@ function dockerLogsUntil() {
     endpoint="$2"
     containerId=$(docker ps -aq --filter "${filter}")
     nohup docker logs -f "${containerId}" > "/tmp/${containerId}.log" 2>&1 &
-    sleep 3s
+    sleep 1s
     PID=$(ps aux | grep "docker" | grep ${containerId} | awk '{print $2}' | sort -nr | head -1)
     if [ "${PID}" != "" ]; then
         eval "tail -f --pid=${PID} /tmp/${containerId}.log | sed '/${endpoint}/q'"
@@ -47,11 +48,34 @@ function dockerLogsUntil() {
     fi
 }
 
-dockerRm "name=${container_name}"
-docker run -d ${default_port} \
-    -e TZ="Asia/Shanghai" \
-    -v ${data_path}:/data \
-    --cpus 0.5 --memory 64M --memory-swap -1 \
-    --network mynet --name ${container_name} \
-    redis:alpine redis-server --appendonly yes
-dockerLogsUntil "name=${container_name}" "[[:space:]]Ready[[:space:]]to[[:space:]]accept[[:space:]]connections"
+for node in ${nodeList[@]}; do
+    containerName="${containerNamePrefix}-${node}"
+    dockerRm "name=${containerName}"
+done
+
+port="${startPort}"
+for node in ${nodeList[@]}; do
+    publish=""
+    if [ "${publishPort}" = "first" -a "${port}" = "${startPort}" -o "${publishPort}" = "true" ]; then
+        publish="-p ${port}:6379"
+    fi
+    dataPath="$(eval readlink -m ${dataHome}/${node})"
+    containerName="${containerNamePrefix}-${node}"
+    echo "dataPath: ${dataPath}"
+    if [ "${cleanup}" = "true" ]; then
+        if [ -e "${dataPath}" ]; then
+            eval "rm -rf ${dataPath}"
+        fi
+    fi
+    if [ ! -e "${dataPath}" ]; then
+        eval "mkdir -p ${dataPath}"
+    fi
+    docker run -d ${publish} \
+        -e TZ="Asia/Shanghai" \
+        -v ${dataPath}:/data \
+        --cpus 0.2 --memory 64M --memory-swap -1 \
+        --network ${network} --name ${containerName} \
+        ${imageTag} redis-server --appendonly yes
+    dockerLogsUntil "name=${containerName}" "[[:space:]]Ready[[:space:]]to[[:space:]]accept[[:space:]]connections"
+    port=$[$port + 1]
+done
