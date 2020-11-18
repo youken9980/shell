@@ -13,8 +13,10 @@ if [ $# -ne 2 ]; then
 fi
 
 result=`echo -e "\n" | telnet $HOST $PORT 2>/dev/null | grep Connected | wc -l`
-if [ $result -eq 1 ]; then
-      echo "Network is Open."
+if [ $result -gt 0 ]; then
+      echo "Network $HOST $PORT is Open."
+      exit 0
 else
-      echo "Network is Closed."
+      echo "Network $HOST $PORT is Closed."
+      exit 1
 fi
