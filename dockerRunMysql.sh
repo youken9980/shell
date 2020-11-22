@@ -29,7 +29,8 @@ fi
 mysqlRootPassword="admin123"
 
 function dockerRm() {
-    containerId=$(docker ps -aq --filter $1)
+    filter="$1"
+    containerId=$(docker ps -aq --filter "${filter}")
     runningContainerId=$(docker ps -aq --filter status=running --filter $1)
     if [ "${runningContainerId}" != "" ]; then
         docker stop ${runningContainerId}
@@ -44,11 +45,10 @@ function dockerLogsUntil() {
     endpoint="$2"
     containerId=$(docker ps -aq --filter "${filter}")
     nohup docker logs -f "${containerId}" > "/tmp/${containerId}.log" 2>&1 &
-    sleep 1s
     PID=$(ps aux | grep "docker" | grep ${containerId} | awk '{print $2}' | sort -nr | head -1)
     if [ "${PID}" != "" ]; then
         eval "tail -f --pid=${PID} /tmp/${containerId}.log | sed '/${endpoint}/q'"
-        kill -9 ${PID}
+        kill ${PID}
         rm /tmp/${containerId}.log
     fi
 }
