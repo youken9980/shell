@@ -92,7 +92,7 @@ for node in ${nodeList[@]}; do
         eval "touch ${slowLogFile}"
     fi
     docker run -d ${publish} \
-        --cpus 2 --memory 768M --memory-swap -1 \
+        --cpus 2 --memory 1024M --memory-swap -1 \
         -e TZ="Asia/Shanghai" \
         -e MYSQL_ROOT_PASSWORD="${mysqlRootPassword}" \
         -v ${dataPath}:/var/lib/mysql \

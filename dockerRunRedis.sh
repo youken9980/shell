@@ -73,7 +73,7 @@ for node in ${nodeList[@]}; do
     docker run -d ${publish} \
         -e TZ="Asia/Shanghai" \
         -v ${dataPath}:/data \
-        --cpus 0.2 --memory 64M --memory-swap -1 \
+        --cpus 2 --memory 1024M --memory-swap -1 \
         --network ${network} --name ${containerName} \
         ${imageTag} redis-server --appendonly yes
     dockerLogsUntil "name=${containerName}" "[[:space:]]Ready[[:space:]]to[[:space:]]accept[[:space:]]connections"
