@@ -58,6 +58,9 @@ for node in ${nodeList[@]}; do
     dockerRm "name=${containerName}"
 done
 
+if [ "${publishPort}" = "first" -a "${port}" = "${startPort}" -o "${publishPort}" = "true" ]; then
+    startPort="${default_port}"
+fi
 port="${startPort}"
 for node in ${nodeList[@]}; do
     publish=""
