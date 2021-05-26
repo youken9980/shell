@@ -65,7 +65,7 @@ port="${startPort}"
 for node in ${nodeList[@]}; do
     publish=""
     if [ "${publishPort}" = "first" -a "${port}" = "${startPort}" -o "${publishPort}" = "true" ]; then
-        publish="-p ${port}:3306"
+        publish="-p 127.0.0.1:${port}:3306"
     fi
     dataPath="$(eval readlink -m ${dataHome}/${node})"
     logsPath="$(eval readlink -m ${logsHome}/${node})"
@@ -94,8 +94,8 @@ for node in ${nodeList[@]}; do
         eval "mkdir -p ${logsPath}"
         eval "touch ${slowLogFile}"
     fi
+        # --cpus 2 --memory 1024M --memory-swap -1 \
     docker run -d ${publish} \
-        --cpus 2 --memory 1024M --memory-swap -1 \
         -e TZ="Asia/Shanghai" \
         -e MYSQL_ROOT_PASSWORD="${mysqlRootPassword}" \
         -v ${dataPath}:/var/lib/mysql \

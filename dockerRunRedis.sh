@@ -57,7 +57,7 @@ port="${startPort}"
 for node in ${nodeList[@]}; do
     publish=""
     if [ "${publishPort}" = "first" -a "${port}" = "${startPort}" -o "${publishPort}" = "true" ]; then
-        publish="-p ${port}:6379"
+        publish="-p 127.0.0.1:${port}:6379"
     fi
     dataPath="$(eval readlink -m ${dataHome}/${node})"
     containerName="${containerNamePrefix}-${node}"
@@ -75,6 +75,7 @@ for node in ${nodeList[@]}; do
         -v ${dataPath}:/data \
         --cpus 2 --memory 1024M --memory-swap -1 \
         --network ${network} --name ${containerName} \
+        --restart always \
         ${imageTag} redis-server --appendonly yes
     dockerLogsUntil "name=${containerName}" "[[:space:]]Ready[[:space:]]to[[:space:]]accept[[:space:]]connections"
     port=$[$port + 1]
