@@ -70,10 +70,10 @@ for node in ${nodeList[@]}; do
     if [ ! -e "${dataPath}" ]; then
         eval "mkdir -p ${dataPath}"
     fi
+#        -v ${dataPath}:/data \
     docker run -d ${publish} \
         -e TZ="Asia/Shanghai" \
-        -v ${dataPath}:/data \
-        --cpus 2 --memory 1024M --memory-swap -1 \
+        --cpus 1 --memory 32M --memory-swap -1 \
         --network ${network} --name ${containerName} \
         --restart always \
         ${imageTag} redis-server --appendonly yes

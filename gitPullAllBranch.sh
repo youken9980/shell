@@ -1,12 +1,13 @@
 #!/bin/bash
 
 current_branch="$(git symbolic-ref --short -q HEAD)"
+default_branch="$(git branch -r | grep '\->' | awk '{ print $3 }' | sed 's/origin\///g')"
 
-git checkout master
+git checkout "${default_branch}"
 git pull --rebase
 
 git remote prune origin
-for item in $(git branch -r | grep -v '\->' | grep -v 'master' | sed 's/origin\///g'); do
+for item in $(git branch -r | grep -v '\->' | sed 's/origin\///g'); do
  	git checkout "${item}"
  	git pull --rebase
 done
