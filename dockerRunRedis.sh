@@ -73,7 +73,7 @@ for node in ${nodeList[@]}; do
 #        -v ${dataPath}:/data \
     docker run -d ${publish} \
         -e TZ="Asia/Shanghai" \
-        --cpus 2 --memory 32M --memory-swap -1 \
+        --cpus 4 --memory 32M --memory-swap -1 \
         --network ${network} --name ${containerName} \
         --restart always \
         ${imageTag} redis-server --appendonly yes
