@@ -2,4 +2,4 @@
 
 git pull --rebase
 git remote prune origin
-git gc --prune=now
+# git gc --prune=now
