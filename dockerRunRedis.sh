@@ -13,7 +13,7 @@ fi
 nodeList+=("${default_suffix}")
 cleanup="true"
 dataHome="~/dockerVolume/redis/data"
-imageTag="redis:6-alpine"
+imageTag="redis:7-alpine"
 containerNamePrefix="redis"
 network="mynet"
 startPort="6379"
