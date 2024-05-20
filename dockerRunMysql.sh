@@ -75,7 +75,7 @@ port="${startPort}"
 for node in ${nodeList[@]}; do
     publish=""
     if [ "${publishPort}" = "first" -a "${port}" = "${startPort}" -o "${publishPort}" = "true" ]; then
-        publish="-p 127.0.0.1:${port}:3306"
+        publish="-p ${port}:3306"
     fi
     dataPath="$(eval readlink -m ${dataHome}/${node})"
     logsPath="$(eval readlink -m ${logsHome}/${node})"
