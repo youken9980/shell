@@ -1,16 +1,26 @@
 #!/bin/bash
 
-default_suffix="local"
+# 命令行格式： dockerRunMysql.sh 容器标识 映射到宿主机的端口号 root密码
+# 服务端命令： docker exec -it mysql-容器标识 mysql --default-character-set="utf8mb4" -u"root" -p"root密码@2024"
+# 客户端命令： docker run -it --rm --net mynet youken9980/mysql:5-debian mysql --default-character-set="utf8mb4" -h"mysql-容器标识" -P"3306" -u"root" -p"root密码"
+
+default_name="local"
 default_port="0"
+default_password="Admin123"
 if [ $# == 1 ]; then
-    default_suffix="$1"
+    default_name="$1"
 fi
 if [ $# == 2 ]; then
-    default_suffix="$1"
+    default_name="$1"
     default_port="$2"
 fi
+if [ $# == 3 ]; then
+    default_name="$1"
+    default_port="$2"
+    default_password="$3"
+fi
 
-nodeList+=("${default_suffix}")
+nodeList+=("${default_name}")
 cleanup="false"
 dataHome="~/dockerVolume/mysql/data"
 logsHome="~/dockerVolume/mysql/logs"
@@ -26,7 +36,7 @@ if [ "${default_port}" = "0" ]; then
 else
     publishPort="true"
 fi
-mysqlRootPassword="admin123"
+mysqlRootPassword="${default_password}"
 
 function dockerRm() {
     filter="$1"

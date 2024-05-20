@@ -1,17 +1,25 @@
 #!/bin/bash
 
-default_suffix="local"
+# 命令行格式： dockerRunRedis.sh 容器标识 映射到宿主机的端口号 密码
+
+default_name="local"
 default_port="0"
+default_password=""
 if [ $# == 1 ]; then
-    default_suffix="$1"
+    default_name="$1"
 fi
 if [ $# == 2 ]; then
-    default_suffix="$1"
+    default_name="$1"
     default_port="$2"
 fi
+if [ $# == 3 ]; then
+    default_name="$1"
+    default_port="$2"
+    default_password="$3"
+fi
 
-nodeList+=("${default_suffix}")
-cleanup="true"
+nodeList+=("${default_name}")
+cleanup="false"
 dataHome="~/dockerVolume/redis/data"
 imageTag="redis:7-alpine"
 containerNamePrefix="redis"
@@ -21,6 +29,11 @@ if [ "${default_port}" = "0" ]; then
     publishPort="false"
 else
     publishPort="true"
+fi
+if [ "${default_password}" = "" ]; then
+    requirePassword="false"
+else
+    requirePassword="true"
 fi
 
 function dockerRm() {
@@ -59,6 +72,10 @@ for node in ${nodeList[@]}; do
     if [ "${publishPort}" = "first" -a "${port}" = "${startPort}" -o "${publishPort}" = "true" ]; then
         publish="-p 127.0.0.1:${port}:6379"
     fi
+    requirepass=""
+    if [ "${requirePassword}" = "true" ]; then
+        requirepass="--requirepass ${default_password}"
+    fi
     dataPath="$(eval readlink -m ${dataHome}/${node})"
     containerName="${containerNamePrefix}-${node}"
     echo "dataPath: ${dataPath}"
@@ -76,7 +93,7 @@ for node in ${nodeList[@]}; do
         --memory 32M --memory-swap -1 \
         --network ${network} --name ${containerName} \
         --restart always \
-        ${imageTag} redis-server --appendonly yes
+        ${imageTag} redis-server --appendonly yes ${requirepass}
     dockerLogsUntil "name=${containerName}" "[[:space:]]Ready[[:space:]]to[[:space:]]accept[[:space:]]connections"
     port=$[$port + 1]
 done
