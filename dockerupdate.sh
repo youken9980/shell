@@ -7,6 +7,7 @@ images="${images} | grep -v 'reg.enncloud.cn/'"
 images="${images} | grep -v 'smartcloud/'"
 images="${images} | grep -v 'chaoscloud/'"
 images="${images} | grep -v 'springcloud/'"
+images="${images} | grep -v 'ztbeo/'"
 eval "${images}" | while read img; do
 	repo="$(echo ${img} | awk '{print $1":"$2}')"
 	size="$(echo ${img} | awk '{print $7}')"
