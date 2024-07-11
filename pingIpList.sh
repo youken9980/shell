@@ -1,17 +1,14 @@
 #!/bin/bash
 
 ipList="
-46.235.227.39
-46.235.230.122
-46.235.231.111
-46.235.231.145
-46.235.231.151
-93.93.130.212
-93.93.135.117
-93.93.135.118
-93.93.135.141
-176.126.240.84
-176.126.240.86
-176.126.240.167
+huecker.io
+cr.yandex
+dockerhub1.beget.com
+mirror.gcr.io
+dockerhub.timeweb.cloud
+public.ecr.aws
+ghcr.io
+daocloud.io
+sf.163.com
 " && \
-for ip in $(echo ${ipList}); do echo ${ip}; ping -c 8 ${ip}; echo ""; done
+for ip in $(echo ${ipList}); do echo ${ip}; ping -c 10 -q ${ip}; echo ""; done
