@@ -88,11 +88,11 @@ for node in ${nodeList[@]}; do
         eval "mkdir -p ${dataPath}"
     fi
 #        -v ${dataPath}:/data \
+        # --restart always \
     docker run -d ${publish} \
         -e TZ="Asia/Shanghai" \
         --memory 32M --memory-swap -1 \
         --network ${network} --name ${containerName} \
-        # --restart always \
         ${imageTag} redis-server --appendonly yes ${requirepass}
     dockerLogsUntil "name=${containerName}" "[[:space:]]Ready[[:space:]]to[[:space:]]accept[[:space:]]connections"
     port=$[$port + 1]
