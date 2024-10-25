@@ -112,7 +112,7 @@ for node in ${nodeList[@]}; do
         -v ${configFile}:/etc/mysql/mysql.cnf \
         -v ${slowLogFile}:/etc/mysql/logs/mysql-slow.log \
         --network ${network} --name ${containerName} \
-        --restart always \
+        # --restart always \
         ${imageTag} --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     dockerLogsUntil "name=${containerName}" "port:[[:space:]]3306[[:space:]][[:space:]]MySQL[[:space:]]Community[[:space:]]Server[[:space:]](GPL)"
     port=$[$port + 1]
