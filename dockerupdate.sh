@@ -1,7 +1,7 @@
 #!/bin/bash
 
 images="docker images -f dangling=false | grep -v 'REPOSITORY' | grep -v '<none>'"
-images="${images} | grep -v 'localhost:5000/'"
+images="${images} | grep -v 'localhost:15000/'"
 images="${images} | grep -v 'local/'"
 images="${images} | grep -v 'youken9980/'"
 images="${images} | grep -v 'reg.enncloud.cn/'"
