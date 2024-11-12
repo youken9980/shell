@@ -79,16 +79,16 @@ for node in ${nodeList[@]}; do
     dataPath="$(eval readlink -m ${dataHome}/${node})"
     containerName="${containerNamePrefix}-${node}"
     echo "dataPath: ${dataPath}"
-    if [ "${cleanup}" = "true" ]; then
-        if [ -e "${dataPath}" ]; then
-            eval "rm -rf ${dataPath}"
-        fi
-    fi
-    if [ ! -e "${dataPath}" ]; then
-        eval "mkdir -p ${dataPath}"
-    fi
+    # if [ "${cleanup}" = "true" ]; then
+    #     if [ -e "${dataPath}" ]; then
+    #         eval "rm -rf ${dataPath}"
+    #     fi
+    # fi
+    # if [ ! -e "${dataPath}" ]; then
+    #     eval "mkdir -p ${dataPath}"
+    # fi
 #        -v ${dataPath}:/data \
-        # --restart always \
+#        --restart always \
     docker run -d ${publish} \
         -e TZ="Asia/Shanghai" \
         --memory 32M --memory-swap -1 \
