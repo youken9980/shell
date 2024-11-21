@@ -13,8 +13,8 @@ images="${images} | grep -v 'sc/code'"
 eval "${images}" | while read img; do
 	repo="$(echo ${img} | awk '{print $1":"$2}')"
 	size="$(echo ${img} | awk '{print $7}')"
-	echo "${repo} ${size}"
-	cmd="docker pull ${repo}"
+	cmd="docker pull --platform $(eval echo $(docker inspect ${repo} | jq .[0].'Architecture')) ${repo}"
+	echo -e "${size}\t${cmd}"
 	eval "${cmd}"
 	echo ""
 done
