@@ -77,9 +77,9 @@ for node in ${nodeList[@]}; do
     if [ "${publishPort}" = "first" -a "${port}" = "${startPort}" -o "${publishPort}" = "true" ]; then
         publish="-p ${port}:3306"
     fi
-    dataPath="$(eval readlink -m ${dataHome}/${node})"
-    logsPath="$(eval readlink -m ${logsHome}/${node})"
-    slowLogFile="$(eval readlink -m ${logsPath}/mysql-slow.log)"
+    dataPath="$(eval readlink -f ${dataHome}/${node})"
+    logsPath="$(eval readlink -f ${logsHome}/${node})"
+    slowLogFile="$(eval readlink -f ${logsPath}/mysql-slow.log)"
     configFile="$(echo "${configFilePattern}" | sed "s|{{ node }}|${node}|g")"
     configFile="$(eval readlink -f ${configFile})"
     if [ ! -f "${configFile}" ];then

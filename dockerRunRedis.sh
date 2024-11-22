@@ -76,7 +76,7 @@ for node in ${nodeList[@]}; do
     if [ "${requirePassword}" = "true" ]; then
         requirepass="--requirepass ${default_password}"
     fi
-    dataPath="$(eval readlink -m ${dataHome}/${node})"
+    dataPath="$(eval readlink -f ${dataHome}/${node})"
     containerName="${containerNamePrefix}-${node}"
     echo "dataPath: ${dataPath}"
     # if [ "${cleanup}" = "true" ]; then
