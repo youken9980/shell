@@ -1,4 +1,5 @@
 #!/bin/bash
+# set -eux
 
 # 命令行格式： dockerRunMysql.sh 容器标识 映射到宿主机的端口号 root密码
 # 服务端命令： docker exec -it mysql-容器标识 mysql --default-character-set="utf8mb4" -u"root" -p"root密码@2024"
@@ -31,6 +32,7 @@ imageTag="youken9980/mysql:5-debian"
 containerNamePrefix="mysql"
 network="mynet"
 startPort="3306"
+port=""
 if [ "${default_port}" = "0" ]; then
     publishPort="false"
 else
@@ -100,8 +102,10 @@ for node in ${nodeList[@]}; do
     if [ ! -e "${dataPath}" ]; then
         eval "mkdir -p ${dataPath}"
     fi
-    if [ ! -e "${slowLogFile}" ]; then
+    if [ ! -e "${logsPath}" ]; then
         eval "mkdir -p ${logsPath}"
+    fi
+    if [ ! -e "${slowLogFile}" ]; then
         eval "touch ${slowLogFile}"
     fi
         # --restart always \
