@@ -81,16 +81,6 @@ for node in ${nodeList[@]}; do
     fi
     dataPath="$(eval readlink -f ${dataHome}/${node})"
     logsPath="$(eval readlink -f ${logsHome}/${node})"
-    slowLogFile="$(eval readlink -f ${logsPath}/mysql-slow.log)"
-    configFile="$(echo "${configFilePattern}" | sed "s|{{ node }}|${node}|g")"
-    configFile="$(eval readlink -f ${configFile})"
-    if [ ! -f "${configFile}" ];then
-        configFile="$(eval readlink -f ${configFileDefault})"
-    fi
-    containerName="${containerNamePrefix}-${node}"
-    echo "dataPath: ${dataPath}"
-    echo "slowLogFile: ${slowLogFile}"
-    echo "configFile: ${configFile}"
     if [ "${cleanup}" = "true" ]; then
         if [ -e "${dataPath}" ]; then
             eval "rm -rf ${dataPath}"
@@ -105,9 +95,19 @@ for node in ${nodeList[@]}; do
     if [ ! -e "${logsPath}" ]; then
         eval "mkdir -p ${logsPath}"
     fi
+    slowLogFile="$(eval readlink -f ${logsPath}/mysql-slow.log)"
     if [ ! -e "${slowLogFile}" ]; then
         eval "touch ${slowLogFile}"
     fi
+    configFile="$(echo "${configFilePattern}" | sed "s|{{ node }}|${node}|g")"
+    configFile="$(eval readlink -f ${configFile})"
+    if [ ! -f "${configFile}" ];then
+        configFile="$(eval readlink -f ${configFileDefault})"
+    fi
+    containerName="${containerNamePrefix}-${node}"
+    echo "dataPath: ${dataPath}"
+    echo "slowLogFile: ${slowLogFile}"
+    echo "configFile: ${configFile}"
         # --restart always \
     docker run -d ${publish} \
         --cpus 4 --memory 1536M --memory-swap -1 \
