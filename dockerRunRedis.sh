@@ -70,7 +70,7 @@ port="${startPort}"
 for node in ${nodeList[@]}; do
     publish=""
     if [ "${publishPort}" = "first" -a "${port}" = "${startPort}" -o "${publishPort}" = "true" ]; then
-        publish="-p ${port}:6379"
+        publish="-p 127.0.0.1:${port}:6379"
     fi
     requirepass=""
     if [ "${requirePassword}" = "true" ]; then
