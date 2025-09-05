@@ -1,10 +1,9 @@
 #!/bin/bash
 
-
 models="ollama list | grep -v 'SIZE'"
 models="${models} | grep -v 'youken9980/'"
 models="${models} | grep -v 'unsloth/'"
-# models="${models} | sort -hr"
+models="${models} | sort -r"
 eval "${models}" | while read line; do
 	model="$(echo ${line} | awk '{print $1}')"
 	size="$(echo ${line} | awk '{print $3" "$4}')"
