@@ -11,6 +11,7 @@ images="${images} | grep -v 'springcloud/'"
 images="${images} | grep -v 'eo/code'"
 images="${images} | grep -v 'sc/code'"
 images="${images} | grep -v 'firecrawl-'"
+images="${images} | grep -v 'watercrawl-0102-'"
 eval "${images}" | while read img; do
 	repo="$(echo ${img} | awk '{print $1":"$2}')"
 	size="$(echo ${img} | awk '{print $7}')"

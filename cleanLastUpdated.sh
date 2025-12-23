@@ -1,6 +1,6 @@
 #!/bin/bash
 
-repo_path=~/Destiny/Share/maven-repository
+repo_path=~/Destiny/Share/repository/maven
 pattern_list="
 *.lastUpdated
 \$\{*
