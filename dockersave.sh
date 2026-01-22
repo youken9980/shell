@@ -35,4 +35,3 @@ eval "${images}" | while read line; do
     fi
 done
 echo "docker save end."
-ls -ltr "${dir}"
