@@ -20,12 +20,12 @@ fi
 
 # 判断 HTTP 状态码
 if (( http_code >= 200 && http_code < 300 )); then
-    echo "$http_code, 文件存在"
+    echo "$url, $http_code, 文件存在"
     exit 0
 elif (( http_code >= 400 )); then
-    echo "http_code, 文件不存在"
+    echo "$url, $http_code, 文件不存在"
     exit 1
 else
-    echo "http_code, 不确定"
+    echo "$url, $http_code, 不确定"
     exit 2
 fi
