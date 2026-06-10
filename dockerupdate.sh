@@ -1,6 +1,6 @@
 #!/bin/bash
 
-images="docker images -f dangling=false | grep -v 'REPOSITORY' | grep -v '<none>'"
+images="docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' -f dangling=false | grep -v 'REPOSITORY' | grep -v '<none>'"
 images="${images} | grep -v 'localhost:'"
 images="${images} | grep -v 'local/'"
 images="${images} | grep -v 'youken9980/'"
@@ -13,8 +13,8 @@ images="${images} | grep -v 'sc/code'"
 images="${images} | grep -v 'firecrawl-'"
 images="${images} | grep -v 'watercrawl-0102-'"
 eval "${images}" | while read img; do
-	repo="$(echo ${img} | awk '{print $1":"$2}')"
-	size="$(echo ${img} | awk '{print $7}')"
+	repo="$(echo ${img} | awk '{print $1}')"
+	size="$(echo ${img} | awk '{print $2}')"
 	cmd="docker pull --platform $(eval echo $(docker inspect ${repo} | jq .[0].'Architecture')) ${repo}"
 	echo -e "${size}\t${cmd}"
 	eval "${cmd}"
